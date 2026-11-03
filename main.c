@@ -74,7 +74,7 @@ int main(int argc, char **argv) {
         rps_lower_string(rps_choice);
         rps_trim_string(rps_choice);
     
-        for(x = 0; x < sizeof(rps_choices) / sizeof(rps_choices[0]); x++) {
+        for(x = 0; x < RPS_ENUM_COUNT; x++) {
             if(strncmp(rps_choice, rps_choices[x], RPS_MAX_INPUT_STRING) == 0) {
                 found = true;
                 break;
