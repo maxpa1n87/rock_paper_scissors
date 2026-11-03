@@ -5,6 +5,8 @@
 #include <string.h>
 #include <stdbool.h>
 
+#include "rock_paper_scissors_config.h"
+
 #define RPS_MAX_INPUT_STRING 128
 #define RPS_MAX_CHOICE_LENGTH 3
 
@@ -23,7 +25,7 @@ const char *rps_choices[] = {
 };
 
 void rps_init() {
-    srand(time(NULL));
+    srand((unsigned int)time(NULL));
 }
 
 const char *rps_get_string(char *buffer) {
@@ -60,7 +62,9 @@ int main(int argc, char **argv) {
     bool found, player_won;
 
     rps_init();
-    printf("Welcome to rock paper and scissors");
+    printf("Welcome to rock paper and scissors version %d.%d\n",
+        rock_paper_scissors_VERSION_MAJOR,
+        rock_paper_scissors_VERSION_MINOR);
 
     found = false;
 
@@ -81,7 +85,7 @@ int main(int argc, char **argv) {
             printf("You have chosen %s\n", rps_choice);
             break;
         } else {
-            printf("Your choice %s can't be right, try again\n");
+            printf("Your choice %s can't be right, try again\n", rps_choice);
         }
     }
 
@@ -95,7 +99,7 @@ int main(int argc, char **argv) {
         printf("This is a draw\n");
     } else {
         if(stricmp(rps_choice, rps_choices[RPS_ENUM_ROCK]) == 0 &&
-           srticmp(rps_cpu_choice, rps_choices[RPS_ENUM_SCISSORS]) == 0) {
+           stricmp(rps_cpu_choice, rps_choices[RPS_ENUM_SCISSORS]) == 0) {
             player_won = true;
         } else if(stricmp(rps_choice, rps_choices[RPS_ENUM_SCISSORS]) == 0 &&
                   stricmp(rps_cpu_choice, rps_choices[RPS_ENUM_ROCK]) == 0) {
@@ -106,6 +110,18 @@ int main(int argc, char **argv) {
         } else if(stricmp(rps_choice, rps_choices[RPS_ENUM_SCISSORS]) == 0 &&
                   stricmp(rps_cpu_choice, rps_choices[RPS_ENUM_PAPER]) == 0) {
             player_won = true;
+        } else if(stricmp(rps_choice, rps_choices[RPS_ENUM_ROCK]) == 0 &&
+                  stricmp(rps_cpu_choice, rps_choices[RPS_ENUM_PAPER]) == 0) {
+            player_won = false;
+        } else if(stricmp(rps_choice, rps_choices[RPS_ENUM_PAPER]) == 0 &&
+                  stricmp(rps_cpu_choice, rps_choices[RPS_ENUM_ROCK]) == 0) {
+            player_won = true;
+        }
+
+        if(player_won) {
+            printf("Player won this time\n");
+        } else {
+            printf("CPU won this time\n");
         }
     }
 

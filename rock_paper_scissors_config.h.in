@@ -1,0 +1,2 @@
+#define rock_paper_scissors_VERSION_MAJOR @rock_paper_scissors_VERSION_MAJOR@
+#define rock_paper_scissors_VERSION_MINOR @rock_paper_scissors_VERSION_MINOR@
