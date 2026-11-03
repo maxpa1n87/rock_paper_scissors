@@ -29,7 +29,8 @@ void rps_init() {
 }
 
 const char *rps_get_string(char *buffer) {
-    fgets(buffer, RPS_MAX_INPUT_STRING + 1, stdin);
+    /* fgets(buffer, RPS_MAX_INPUT_STRING + 1, stdin); */
+    scanf("%s", buffer);
     return buffer;
 }
 
@@ -70,12 +71,13 @@ int main(int argc, char **argv) {
 
     while(!found) {
         printf("Type in rock paper or scissors: ");
+        memset(rps_choice, 0, sizeof(rps_choice));
         rps_get_string(rps_choice);
         rps_lower_string(rps_choice);
-        rps_trim_string(rps_choice);
+        /* rps_trim_string(rps_choice); */
     
         for(x = 0; x < RPS_ENUM_COUNT; x++) {
-            if(strncmp(rps_choice, rps_choices[x], RPS_MAX_INPUT_STRING) == 0) {
+            if(strcmp(rps_choice, rps_choices[x]) == 0) {
                 found = true;
                 break;
             }
