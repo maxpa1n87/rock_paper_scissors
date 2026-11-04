@@ -9,6 +9,7 @@
 
 #define RPS_MAX_INPUT_STRING 128
 #define RPS_MAX_CHOICE_LENGTH 3
+#define RPS_MAX_INPUT_CONTINUE 3
 
 typedef enum {
     RPS_ENUM_ROCK,
@@ -28,14 +29,14 @@ void rps_init() {
     srand((unsigned int)time(NULL));
 }
 
-const char *rps_get_string(char *buffer) {
-    /* fgets(buffer, RPS_MAX_INPUT_STRING + 1, stdin); */
-    scanf("%s", buffer);
+const char *rps_get_string(char *buffer, size_t length) {
+    fgets(buffer, length, stdin);
+    fflush(stdin);
     return buffer;
 }
 
 int rps_generate_random_number() {
-    return rand() % RPS_MAX_CHOICE_LENGTH + 1;
+    return rand() % RPS_MAX_CHOICE_LENGTH;
 }
 
 void rps_lower_string(char *string) {
@@ -48,19 +49,31 @@ void rps_lower_string(char *string) {
 
 void rps_trim_string(char *string) {
     char *p = string;
-
-    while(isspace(*string)) {
+    
+    while(isspace((int)*string)) {
         string++;
     }
 
-    while(*p++ = *string++) {}
+    if(*string) {
+        
+        while (*p) {
+            p++;
+        }
+
+        while (isspace((int)*(--p))) {
+
+        }
+
+        p[1] = '\0';        
+    }
 }
 
 int main(int argc, char **argv) {
     char rps_choice[RPS_MAX_INPUT_STRING + 1];
     char rps_cpu_choice[RPS_MAX_INPUT_STRING + 1];
+    char rps_continue[RPS_MAX_INPUT_CONTINUE + 1];
     int x; 
-    bool found, player_won;
+    bool found, player_won, keepgoing;
 
     rps_init();
     printf("Welcome to rock paper and scissors version %d.%d\n",
@@ -69,61 +82,88 @@ int main(int argc, char **argv) {
 
     found = false;
 
-    while(!found) {
-        printf("Type in rock paper or scissors: ");
-        memset(rps_choice, 0, sizeof(rps_choice));
-        rps_get_string(rps_choice);
-        rps_lower_string(rps_choice);
-        /* rps_trim_string(rps_choice); */
-    
-        for(x = 0; x < RPS_ENUM_COUNT; x++) {
-            if(strcmp(rps_choice, rps_choices[x]) == 0) {
-                found = true;
+    keepgoing = true;
+
+    while(keepgoing) {
+
+        while(!found) {
+            printf("Type in rock paper or scissors: ");
+            memset(rps_choice, 0, sizeof(rps_choice));
+            rps_get_string(rps_choice, RPS_MAX_INPUT_STRING + 1);
+            rps_lower_string(rps_choice);
+            rps_trim_string(rps_choice);
+        
+            for(x = 0; x < RPS_ENUM_COUNT; x++) {
+                if(stricmp(rps_choice, rps_choices[x]) == 0) {
+                    found = true;
+                    break;
+                }
+            }
+
+            if(found) {
+                printf("You have chosen %s\n", rps_choice);
                 break;
+            } else {
+                printf("Your choice %s can't be right, try again\n", rps_choice);
+                continue;
             }
         }
 
-        if(found) {
-            printf("You have chosen %s\n", rps_choice);
+        strncpy(rps_cpu_choice, rps_choices[rps_generate_random_number()], RPS_MAX_INPUT_STRING);
+
+        printf("CPU choses %s\n", rps_cpu_choice);
+
+        player_won = false;
+
+        if(stricmp(rps_choice, rps_cpu_choice) == 0) {
+            printf("This is a draw\n");
+        } else {
+            if(stricmp(rps_choice, rps_choices[RPS_ENUM_ROCK]) == 0 &&
+            stricmp(rps_cpu_choice, rps_choices[RPS_ENUM_SCISSORS]) == 0) {
+                player_won = true;
+            } else if(stricmp(rps_choice, rps_choices[RPS_ENUM_SCISSORS]) == 0 &&
+                    stricmp(rps_cpu_choice, rps_choices[RPS_ENUM_ROCK]) == 0) {
+                player_won = false;
+            } else if(stricmp(rps_choice, rps_choices[RPS_ENUM_PAPER]) == 0 &&
+                    stricmp(rps_cpu_choice, rps_choices[RPS_ENUM_SCISSORS]) == 0) {
+                player_won = false;
+            } else if(stricmp(rps_choice, rps_choices[RPS_ENUM_SCISSORS]) == 0 &&
+                    stricmp(rps_cpu_choice, rps_choices[RPS_ENUM_PAPER]) == 0) {
+                player_won = true;
+            } else if(stricmp(rps_choice, rps_choices[RPS_ENUM_ROCK]) == 0 &&
+                    stricmp(rps_cpu_choice, rps_choices[RPS_ENUM_PAPER]) == 0) {
+                player_won = false;
+            } else if(stricmp(rps_choice, rps_choices[RPS_ENUM_PAPER]) == 0 &&
+                    stricmp(rps_cpu_choice, rps_choices[RPS_ENUM_ROCK]) == 0) {
+                player_won = true;
+            }
+
+            if(player_won) {
+                printf("Player won this time\n");
+            } else {
+                printf("CPU won this time\n");
+            }
+        }
+
+        printf("Want to play again? (yes/no): ");
+        memset(rps_continue, 0, sizeof(rps_continue));
+        rps_get_string(rps_continue, RPS_MAX_INPUT_CONTINUE + 1);
+        rps_lower_string(rps_continue);
+        rps_trim_string(rps_continue);
+
+        if(stricmp(rps_continue, "yes") == 0) {
+            keepgoing = true;
+            found = false;
+            continue;
+        } else if(stricmp(rps_continue, "no") == 0) {
+            keepgoing = false;
+            found = true;
             break;
         } else {
-            printf("Your choice %s can't be right, try again\n", rps_choice);
-        }
-    }
-
-    strncpy(rps_cpu_choice, rps_choices[rps_generate_random_number()], RPS_MAX_INPUT_STRING);
-
-    printf("CPU choses %s\n", rps_cpu_choice);
-
-    player_won = false;
-
-    if(stricmp(rps_choice, rps_cpu_choice) == 0) {
-        printf("This is a draw\n");
-    } else {
-        if(stricmp(rps_choice, rps_choices[RPS_ENUM_ROCK]) == 0 &&
-           stricmp(rps_cpu_choice, rps_choices[RPS_ENUM_SCISSORS]) == 0) {
-            player_won = true;
-        } else if(stricmp(rps_choice, rps_choices[RPS_ENUM_SCISSORS]) == 0 &&
-                  stricmp(rps_cpu_choice, rps_choices[RPS_ENUM_ROCK]) == 0) {
-            player_won = false;
-        } else if(stricmp(rps_choice, rps_choices[RPS_ENUM_PAPER]) == 0 &&
-                  stricmp(rps_cpu_choice, rps_choices[RPS_ENUM_SCISSORS]) == 0) {
-            player_won = false;
-        } else if(stricmp(rps_choice, rps_choices[RPS_ENUM_SCISSORS]) == 0 &&
-                  stricmp(rps_cpu_choice, rps_choices[RPS_ENUM_PAPER]) == 0) {
-            player_won = true;
-        } else if(stricmp(rps_choice, rps_choices[RPS_ENUM_ROCK]) == 0 &&
-                  stricmp(rps_cpu_choice, rps_choices[RPS_ENUM_PAPER]) == 0) {
-            player_won = false;
-        } else if(stricmp(rps_choice, rps_choices[RPS_ENUM_PAPER]) == 0 &&
-                  stricmp(rps_cpu_choice, rps_choices[RPS_ENUM_ROCK]) == 0) {
-            player_won = true;
-        }
-
-        if(player_won) {
-            printf("Player won this time\n");
-        } else {
-            printf("CPU won this time\n");
+            printf("Unknown input stopping program\n");
+            keepgoing = false;
+            found = true;
+            break;
         }
     }
 
