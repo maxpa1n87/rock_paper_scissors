@@ -9,7 +9,7 @@
 
 #define RPS_MAX_INPUT_STRING 128
 #define RPS_MAX_CHOICE_LENGTH 3
-#define RPS_MAX_INPUT_CONTINUE 3
+#define RPS_MAX_INPUT_CONTINUE 4
 
 typedef enum {
     RPS_ENUM_ROCK,
@@ -29,7 +29,7 @@ void rps_init() {
     srand((unsigned int)time(NULL));
 }
 
-const char *rps_get_string(char *buffer, size_t length) {
+char *rps_get_string(char *buffer, int length) {
     fgets(buffer, length, stdin);
     fflush(stdin);
     return buffer;
