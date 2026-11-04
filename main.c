@@ -48,14 +48,13 @@ void rps_lower_string(char *string) {
 }
 
 void rps_trim_string(char *string) {
-    char *p = string;
-    
+
     while(isspace((int)*string)) {
         string++;
     }
 
     if(*string) {
-        
+        char *p = string;
         while (*p) {
             p++;
         }
