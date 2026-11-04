@@ -89,7 +89,7 @@ int main(int argc, char **argv) {
         while(!found) {
             printf("Type in rock paper or scissors: ");
             memset(rps_choice, 0, sizeof(rps_choice));
-            rps_get_string(rps_choice, RPS_MAX_INPUT_STRING + 1);
+            rps_get_string(rps_choice, sizeof(rps_choice));
             rps_lower_string(rps_choice);
             rps_trim_string(rps_choice);
         
@@ -109,7 +109,7 @@ int main(int argc, char **argv) {
             }
         }
 
-        strncpy(rps_cpu_choice, rps_choices[rps_generate_random_number()], RPS_MAX_INPUT_STRING);
+        strncpy(rps_cpu_choice, rps_choices[rps_generate_random_number()], sizeof(rps_cpu_choice));
 
         printf("CPU choses %s\n", rps_cpu_choice);
 
@@ -147,7 +147,7 @@ int main(int argc, char **argv) {
 
         printf("Want to play again? (yes/no): ");
         memset(rps_continue, 0, sizeof(rps_continue));
-        rps_get_string(rps_continue, RPS_MAX_INPUT_CONTINUE + 1);
+        rps_get_string(rps_continue, sizeof(rps_continue));
         rps_lower_string(rps_continue);
         rps_trim_string(rps_continue);
 
